@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://FireX-Pixel/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://FireX-Pixel/locale/overlay.dtd">
+<overlay id="FireX-Pixel" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
+	<script src="overlay.js" />
+	<script src="pixelManage.js" />
+	<toolbarpalette id="BrowserToolbarPalette">
+		<toolbarbutton type="menu-button" id="toolbar-pixel" class="toolbarbutton-1 chromeclass-toolbar-additional">
+			<panel id="thepanel" type="arrow">
+			  <hbox align="start">
+			    <vbox>
+			    	<hbox class="pixel-hbox">
+			      		<description value="&opacity;"/>
+			      		<html:input id="opacity-range" type="range" min="0" max="10" />
+			      	</hbox>
+			      	<hbox id="pixel-coords" class="pixel-hbox">
+			      		<label control="coord-x" value="X:" /> <textbox id="coord-x" class="coord-box" placeholder="0" />
+			      		<label control="coord-y" value="Y:" /> <textbox id="coord-y" class="coord-box" placeholder="0" />
+			      	</hbox>
+			      	<button id="upload-layout" class="pixel-button" label="Загрузить макет" />
+			      	<hbox id="pixel-layout" class="pixel-hbox">
+			      		<description value="&not_loaded;" />
+			      	</hbox>
+			      	<hbox id="tools_panel">
+			      		<button id="tools_add" label="&add_layout;" class="pixel-button" />
+			      		<button id="tools_remove" label="&delete_layout;" class="pixel-button" />
+			      	</hbox>
+			    </vbox>
+			  </hbox>
+			</panel>		
+		</toolbarbutton>	
+	</toolbarpalette>
+</overlay>

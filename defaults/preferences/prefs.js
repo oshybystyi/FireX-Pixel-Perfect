@@ -1,0 +1,1 @@
+pref('extensions.firex-pixel.firstRun', true);

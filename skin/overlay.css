@@ -1,0 +1,40 @@
+#toolbar-pixel {
+  list-style-image: url("icon-24.png");
+}
+toolbar[iconsize="small"] #toolbar-pixel {
+  list-style-image: url("icon-16.png");
+}
+toolbarpaletteitem[place="palette"] #toolbar-pixel {
+	list-style-image: url("icon-32.png");
+}
+#toolbar-pixel[cui-areatype="menu-panel"] {
+	list-style-image: url("icon-32.png");
+}
+button.pixel-button {
+    list-style-image: none;
+    -moz-appearance: none;
+    border: none;
+    color: #000;
+    padding: 4px;
+    font-family: 'Tahoma', sans-serif;
+    text-transform: uppercase;
+    font-size: 10px;
+    border-radius: 2px;
+    border: 1px solid #E0E0E0;
+    background: -moz-linear-gradient(top, #f9fcf7 0%, #f5f9f0 100%);
+    background: linear-gradient(top, #f9fcf7 0%, #f5f9f0 100%);
+    cursor: pointer;
+}
+hbox.pixel-hbox {
+    color: #897769;
+    font-weight: bold;
+}
+textbox.coord-box {
+    font-weight: normal;
+}
+#thepanel {
+    text-align: center;
+}
+#thepanel hbox#pixel-layout, #thepanel hbox#tools_panel {
+    display: inline-block;
+}
