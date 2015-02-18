@@ -114,8 +114,10 @@ PixelManage.prototype.addToDOM = function(name)
 
         var pixelWrap = content.document.createElement("div"),
 		top = (document.getElementById("coord-y").value) ? document.getElementById("coord-y").value + 'px' : 0,
-		left = (document.getElementById("coord-x").value) ? document.getElementById("coord-x").value + 'px' : 0;
-        pixelWrap.setAttribute("style", "position: absolute; z-index: 999999; top: "+top+"; left: "+left+"; -moz-user-select: none; cursor: move;");
+		left = (document.getElementById("coord-x").value) ? document.getElementById("coord-x").value + 'px' : 0,
+		opacity = (document.getElementById("opacity-range").value >= 10) ? 1.0 : "0." + document.getElementById("opacity-range").value;
+		
+        pixelWrap.setAttribute("style", "position: absolute; z-index: 999999; top: "+top+"; left: "+left+"; -moz-user-select: none; cursor: move;opacity:"+opacity);
         pixelWrap.setAttribute("id", "pixel-image");
         content.document.body.appendChild(pixelWrap);
 
