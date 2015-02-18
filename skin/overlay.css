@@ -10,6 +10,9 @@ toolbarpaletteitem[place="palette"] #toolbar-pixel {
 #toolbar-pixel[cui-areatype="menu-panel"] {
 	list-style-image: url("icon-32.png");
 }
+#toolbar-pixel dropmarker {
+    padding-left: 2px;
+}
 button.pixel-button {
     list-style-image: none;
     -moz-appearance: none;

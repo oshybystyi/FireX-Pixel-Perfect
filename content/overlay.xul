@@ -5,7 +5,7 @@
 	<script src="overlay.js" />
 	<script src="pixelManage.js" />
 	<toolbarpalette id="BrowserToolbarPalette">
-		<toolbarbutton type="menu-button" id="toolbar-pixel" class="toolbarbutton-1 chromeclass-toolbar-additional">
+		<toolbarbutton type="menu" id="toolbar-pixel" label="&tooltip_button;" tooltiptext="&tooltip_button;" class="toolbarbutton-1 chromeclass-toolbar-additional">
 			<panel id="thepanel" type="arrow">
 			  <hbox align="start">
 			    <vbox>
