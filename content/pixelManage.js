@@ -95,6 +95,17 @@ PixelManage.prototype.removeFromDOM = function()
         content.document.body.removeChild(image);
     }
 }
+PixelManage.prototype.toggleTransparence = function()
+{
+
+    var image = content.document.getElementById("pixel-image");
+    if(!image.style.pointerEvents)
+    {
+		image.style.pointerEvents = 'none';
+    }else{
+		image.style.pointerEvents= '';
+    }
+}
 PixelManage.prototype.addToDOM = function(name)
 {
     if(!this.imageObject)

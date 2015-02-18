@@ -7,6 +7,7 @@ var PixelPerfect = function()
 {
     this.toolbarItem = "toolbar-pixel";
     this.ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+    this.prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     this.localFile = null;
     this.pixelManager = null;
 }
@@ -20,8 +21,20 @@ PixelPerfect.prototype.onload = function()
 
     var self = this;
 
+    var tools_transparent = document.getElementById("tools_transparent");
     var tools_add = document.getElementById("tools_add");
     var tools_remove = document.getElementById("tools_remove");
+	
+    if(tools_transparent)
+    {
+        tools_transparent.addEventListener("click", function() {
+            if(self.pixelManager)
+            {
+                self.pixelManager.toggleTransparence();
+            }
+        });
+    }
+	
     if(tools_add)
     {
         tools_add.addEventListener("click", function() {
@@ -45,10 +58,10 @@ PixelPerfect.prototype.onload = function()
 }
 PixelPerfect.prototype.isFirstRun = function()
 {
-    var firstRun = ProxyAddonBar.prefs.getBoolPref('extensions.firex-pixel.firstRun');
+    var firstRun = this.prefs.getBoolPref('extensions.firex-pixel.firstRun');
     if(firstRun)
     {
-        ProxyAddonBar.prefs.setBoolPref('extensions.firex-pixel.firstRun', false);
+        this.prefs.setBoolPref('extensions.firex-pixel.firstRun', false);
         return true;
     }
     return false;

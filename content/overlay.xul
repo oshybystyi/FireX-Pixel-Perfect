@@ -5,7 +5,7 @@
 	<script src="overlay.js" />
 	<script src="pixelManage.js" />
 	<toolbarpalette id="BrowserToolbarPalette">
-		<toolbarbutton type="menu-button" id="toolbar-pixel" class="toolbarbutton-1 chromeclass-toolbar-additional">
+		<toolbarbutton type="menu" id="toolbar-pixel" label="&tooltip_button;" tooltiptext="&tooltip_button;" class="toolbarbutton-1 chromeclass-toolbar-additional">
 			<panel id="thepanel" type="arrow">
 			  <hbox align="start">
 			    <vbox>
@@ -17,13 +17,14 @@
 			      		<label control="coord-x" value="X:" /> <textbox id="coord-x" class="coord-box" placeholder="0" />
 			      		<label control="coord-y" value="Y:" /> <textbox id="coord-y" class="coord-box" placeholder="0" />
 			      	</hbox>
-			      	<button id="upload-layout" class="pixel-button" label="Загрузить макет" />
+			      	<button id="upload-layout" class="pixel-button" label="&upload_layout;" />
 			      	<hbox id="pixel-layout" class="pixel-hbox">
 			      		<description value="&not_loaded;" />
 			      	</hbox>
 			      	<hbox id="tools_panel">
 			      		<button id="tools_add" label="&add_layout;" class="pixel-button" />
 			      		<button id="tools_remove" label="&delete_layout;" class="pixel-button" />
+			      		<button id="tools_transparent" label="&transparent_layout;" class="pixel-button" />
 			      	</hbox>
 			    </vbox>
 			  </hbox>
