@@ -1,0 +1,7 @@
+<!ENTITY opacity "Opacity:">
+<!ENTITY not_loaded "Il layout è stato caricato.">
+<!ENTITY upload_layout "Carica il layout">
+<!ENTITY add_layout "Aggiungi layout">
+<!ENTITY delete_layout "Rimuovi layout">
+<!ENTITY tooltip_button "FireX Pixel-Perfect">
+<!ENTITY transparent_layout "Unlock/Lock">

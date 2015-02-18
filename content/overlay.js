@@ -23,6 +23,8 @@ PixelPerfect.prototype.onload = function()
 
     var tools_add = document.getElementById("tools_add");
     var tools_remove = document.getElementById("tools_remove");
+    var tools_transparent = document.getElementById("tools_transparent");
+    
     if(tools_add)
     {
         tools_add.addEventListener("click", function() {
@@ -40,6 +42,16 @@ PixelPerfect.prototype.onload = function()
             if(self.pixelManager)
             {
                 self.pixelManager.removeFromDOM();
+            }
+        });
+    }
+
+    if(tools_transparent)
+    {
+        tools_transparent.addEventListener("click", function() {
+            if(self.pixelManager)
+            {
+                self.pixelManager.toggleTransparence();
             }
         });
     }

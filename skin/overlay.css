@@ -41,3 +41,6 @@ textbox.coord-box {
 #thepanel hbox#pixel-layout, #thepanel hbox#tools_panel {
     display: inline-block;
 }
+vbox.buttons-wrap {
+    display: block;
+}

@@ -22,8 +22,13 @@
 			      		<description value="&not_loaded;" />
 			      	</hbox>
 			      	<hbox id="tools_panel">
-			      		<button id="tools_add" label="&add_layout;" class="pixel-button" />
-			      		<button id="tools_remove" label="&delete_layout;" class="pixel-button" />
+			      		<vbox class="buttons-wrap">
+			      			<button id="tools_add" label="&add_layout;" class="pixel-button" />
+			      			<button id="tools_remove" label="&delete_layout;" class="pixel-button" />
+			      		</vbox>
+			      		<vbox class="buttons-wrap">
+			      			<button id="tools_transparent" label="&transparent_layout;" class="pixel-button" />
+			      		</vbox>
 			      	</hbox>
 			    </vbox>
 			  </hbox>

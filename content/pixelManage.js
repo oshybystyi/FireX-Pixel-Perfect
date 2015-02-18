@@ -182,3 +182,15 @@ PixelManage.prototype.setInputCoords = function()
     document.getElementById("coord-x").value = parseInt(this.imageObject.style.left, 10);
     document.getElementById("coord-y").value = parseInt(this.imageObject.style.top, 10);
 }
+PixelManage.prototype.toggleTransparence = function()
+{
+    var image = content.document.getElementById("pixel-image");
+    if(!image.style.pointerEvents)
+    {
+        image.style.pointerEvents = 'none';
+    }
+    else
+    {
+        image.style.pointerEvents = '';
+    }
+}
