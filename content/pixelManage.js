@@ -97,13 +97,13 @@ PixelManage.prototype.removeFromDOM = function()
 }
 PixelManage.prototype.toggleTransparence = function()
 {
-
     var image = content.document.getElementById("pixel-image");
+	
     if(!image.style.pointerEvents)
     {
 		image.style.pointerEvents = 'none';
     }else{
-		image.style.pointerEvents= '';
+		image.style.pointerEvents= 'all';
     }
 }
 PixelManage.prototype.addToDOM = function(name)

@@ -10,6 +10,9 @@ toolbarpaletteitem[place="palette"] #toolbar-pixel {
 #toolbar-pixel[cui-areatype="menu-panel"] {
 	list-style-image: url("icon-32.png");
 }
+#toolbar-pixel dropmarker {
+    padding-left: 2px;
+}
 button.pixel-button {
     list-style-image: none;
     -moz-appearance: none;
@@ -37,4 +40,7 @@ textbox.coord-box {
 }
 #thepanel hbox#pixel-layout, #thepanel hbox#tools_panel {
     display: inline-block;
+}
+vbox.buttons-wrap {
+    display: block;
 }
