@@ -4,7 +4,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>firex@pixel</em:id>
     <em:name>FireX Pixel Perfect</em:name>
-    <em:version>1.3</em:version>
+    <em:version>1.4</em:version>
     <em:description>Pixel Perfect for web-developers.</em:description>
     <em:creator>Exclumice</em:creator>
     <em:homepageURL>https://addons.mozilla.org/ru/firefox/user/Exclumice/</em:homepageURL>

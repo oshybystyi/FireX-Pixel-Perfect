@@ -2,10 +2,10 @@ content FireX-Pixel content/
 content FireX-Pixel content/ contentaccessible=yes
 overlay chrome://browser/content/browser.xul    chrome://FireX-Pixel/content/overlay.xul
 
-locale	FireX-Pixel	en-US	locale/en-US/
-locale  FireX-Pixel fr-FR locale/fr-FR/
-locale	FireX-Pixel	it-IT	locale/it-IT/
-locale	FireX-Pixel	ru-RU	locale/ru/
+locale  FireX-Pixel en-US   locale/en-US/
+locale  FireX-Pixel fr-FR   locale/fr-FR/
+locale  FireX-Pixel it-IT   locale/it-IT/
+locale  FireX-Pixel ru-RU   locale/ru/
 
 skin    FireX-Pixel classic/1.0 skin/
 style   chrome://global/content/customizeToolbar.xul  chrome://FireX-Pixel/skin/overlay.css
