@@ -17,7 +17,7 @@
 			      		<label control="coord-x" value="X:" /> <textbox id="coord-x" class="coord-box" placeholder="0" />
 			      		<label control="coord-y" value="Y:" /> <textbox id="coord-y" class="coord-box" placeholder="0" />
 			      	</hbox>
-			      	<button id="upload-layout" class="pixel-button" label="Загрузить макет" />
+			      	<button id="upload-layout" class="pixel-button" label="&upload_layout;" />
 			      	<hbox id="pixel-layout" class="pixel-hbox">
 			      		<description value="&not_loaded;" />
 			      	</hbox>

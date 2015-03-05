@@ -21,10 +21,10 @@ PixelPerfect.prototype.onload = function()
 
     var self = this;
 
+    var tools_transparent = document.getElementById("tools_transparent");
     var tools_add = document.getElementById("tools_add");
     var tools_remove = document.getElementById("tools_remove");
-    var tools_transparent = document.getElementById("tools_transparent");
-    
+	
     if(tools_add)
     {
         tools_add.addEventListener("click", function() {
