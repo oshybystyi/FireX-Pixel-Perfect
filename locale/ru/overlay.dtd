@@ -1,7 +1,0 @@
-<!ENTITY opacity "Прозрачность:">
-<!ENTITY not_loaded "Макет не загружен.">
-<!ENTITY upload_layout "Загрузить макет">
-<!ENTITY add_layout "Добавить макет">
-<!ENTITY delete_layout "Удалить макет">
-<!ENTITY tooltip_button "FireX Pixel-Perfect">
-<!ENTITY transparent_layout "Заблокировать/Разблокировать">
