@@ -174,11 +174,16 @@ PixelPerfect.prototype.copyLayout = function()
     }
 }
 
-window.addEventListener("load", function() {
+function firexPixelInit() {
     var pixel = new PixelPerfect();
     pixel.onload();
 
     document.getElementById("upload-layout").addEventListener("click", function() {
+        document.getElementById('thepanel').hidePopup();
         pixel.filePicker();
     });
-});
+
+    pixelPerfectLoaded = true;
+}
+
+firexPixelInit();

@@ -27,6 +27,9 @@ const {
     HTMLINPUT, LABEL, TEXTBOX, BUTTON
 } = Xul;
 
+/** TODO: think about removing that **/
+Cu.import("resource://gre/modules/devtools/Console.jsm");
+
 /**
  * Add and remove addon user interface - replacement over overlay.xul, which
  * can't be ported into restartless extension
@@ -53,30 +56,41 @@ FirexPixelUi.prototype = {
         this.createToolboxButton();
     },
 
-    destroy: function () {
+    destroy: function (win) {
         CustomizableUI.destroyWidget(this.buttonId);
         if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET))
             this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
+
+        /** TODO: move that to be in logic implementation module **/
+        //this.unregisterOldScripts(win);
     },
 
     createToolboxButton: function () {
         var self = this; 
+
+        /** 
+         * TODO: figure out how createWidget finds out about all windows and
+         * possibly use it for attach method
+         */
         CustomizableUI.createWidget({
             id: this.buttonId,
             defaultArea: CustomizableUI.AREA_NAVBAR,
             label: this.stringBundle.GetStringFromName('firexPixel.tooltip_button'),
             tooltiptext: this.stringBundle.GetStringFromName('firexPixel.tooltip_button'),
-            onCommand: function(aEvent) {
+            onCreated: function (elem) {
+                try {
+                    self.panelNode = self.createPanel(elem);
+                }
+                catch (e) {
+                    console.error(e);
+                }
+            },
+            onCommand: function (aEvent) {
                 //var thisDOMWindow = aEvent.target.ownerDocument.defaultView; //this is the browser (xul) window
                 /*
                 var thisWindowsSelectedTabsWindow = thisDOMWindow.gBrowser.selectedTab.linkedBrowser.contentWindow; //this is the html window of the currently selected tab
                 thisWindowsSelectedTabsWindow.alert('alert from html window of selected tab');
                 */
-                
-                if (self.panelNode === null) {
-                    self.panelNode = self.createPanel(aEvent.target);
-                }
-
                 self.panelNode.openPopup(aEvent.target);
             }
         });
@@ -114,7 +128,65 @@ FirexPixelUi.prototype = {
                 )
             );
 
+        /** TODO: remove next comments **/
+        //let node = panel.build(elem);
+
+        //this.registerOldScripts(elem);
+
         return panel.build(elem);
+    },
+
+    registerOldScripts: function (elem) {
+        /*
+        let doc = elem.ownerDocument,
+            extensionWindow = doc.getElementById('main-window');
+
+        let overlayScript = doc.createElement('script'),
+            pixelManageScript = doc.createElement('script');
+
+        overlayScript.setAttribute('type', 'application/javascript');
+        overlayScript.setAttribute('src', 'chrome://FireX-Pixel/content/overlay.js');
+        overlayScript.setAttribute('id', 'overlay-script');
+
+        pixelManageScript.setAttribute('type', 'application/javascript');
+        pixelManageScript.setAttribute('src', 'chrome://FireX-Pixel/content/pixelManage.js');
+        pixelManageScript.setAttribute('id', 'pixel-manage-script');
+
+        extensionWindow.appendChild(overlayScript);
+        extensionWindow.appendChild(pixelManageScript);
+        */
+        /*
+        Cu.import('chrome://FireX-Pixel/content/overlay.js');
+        Cu.import('chrome://FireX-Pixel/content/pixelManage.js');
+        */
+        var win = elem.ownerDocument.defaultView;
+        var scope = {
+            window: win,
+            document: win.document,
+            content: win.content,
+            Components: Components
+        };
+
+        Services.scriptloader.loadSubScript('chrome://FireX-Pixel/content/pixelManage.js', scope);
+        Services.scriptloader.loadSubScript('chrome://FireX-Pixel/content/overlay.js', scope);
+
+        /** TODO: assign scope to constructor variable **/
+    },
+
+    unregisterOldScripts: function (win) {
+        /*
+        let overlayScript = win.document.getElementById('overlay-script'),
+            pixelManageScript = win.document.getElementById('pixel-manage-script');
+
+        overlayScript.parentNode.removeChild(overlayScript);
+        pixelManageScript.parentNode.removeChild(pixelManageScript);
+        */
+        /*
+        Cu.unload('chrome://FireX-Pixel/content/overlay.js');
+        Cu.unload('chrome://FireX-Pixel/content/pixelManage.js');
+        */
+
+        /** TODO: remove window load event listener - from overlay.js **/
     }
 
 }
