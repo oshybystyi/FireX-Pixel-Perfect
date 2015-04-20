@@ -144,7 +144,13 @@ PixelPerfect.prototype.copyLayout = function()
 {
     var dir = Components.classes["@mozilla.org/file/directory_service;1"]
         .getService(Components.interfaces.nsIProperties)
-        .get("ProfD", Components.interfaces.nsIFile);
+        .get("ProfD", Components.interfaces.nsIFile),
+        tmpDir = Components.classes["@mozilla.org/file/directory_service;1"]
+        .getService(Components.interfaces.nsIProperties)
+        .get("TmpD", Components.interfaces.nsIFile);
+
+    /** Temporary directory path used when developing extension **/
+    tmpDir.append('firex@pixel');
 
     var layoutsPath = ["extensions", "firex@pixel", "content", "layouts"];
 
@@ -159,19 +165,18 @@ PixelPerfect.prototype.copyLayout = function()
     iDir.initWithPath(dir.path);
     iFile.initWithPath(this.localFile.path);
 
-    iFile.copyTo(iDir, null);
-
-    try
-    {
-        var manage = new PixelManage();
-        manage.addToDOM(this.localFile.leafName);
-
-        this.pixelManager = manage;
+    try {
+        iFile.copyTo(iDir, null);
     }
-    catch(e)
-    {
-        Firebug.Console.log(e.stack);
+    catch (e) {
+        /** When we developing without .xpi than use temporary folder **/
+        iFile.copyTo(tmpDir, null);
     }
+
+    var manage = new PixelManage();
+    manage.addToDOM(this.localFile.leafName);
+
+    this.pixelManager = manage;
 }
 
 function firexPixelInit() {
@@ -179,11 +184,8 @@ function firexPixelInit() {
     pixel.onload();
 
     document.getElementById("upload-layout").addEventListener("click", function() {
-        document.getElementById('thepanel').hidePopup();
         pixel.filePicker();
     });
-
-    pixelPerfectLoaded = true;
 }
 
 firexPixelInit();
