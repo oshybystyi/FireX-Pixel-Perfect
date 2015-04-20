@@ -67,7 +67,12 @@ XulTag.prototype =
   },
 
   build: function(parentNode, options = {}) {
-    let doc = parentNode.ownerDocument;
+    /**
+     * CUSTOM
+     * when parentNode is document than just return created node and don't
+     * modify parent node
+     */
+    let doc = parentNode.ownerDocument || parentNode;
 
     // Create the current XUL element and set all defined attributes 
     if (this.tagName.indexOf('html:') === 0) {
@@ -85,6 +90,11 @@ XulTag.prototype =
     for (let i=0; i<this.children.length; i++) {
       let child = this.children[i];
       child.build(node);
+    }
+
+    if (doc === parentNode) {
+      /** CUSTOM: when parent node is document we can't append into it **/
+      return node;
     }
 
     // Append created element at the right position within

@@ -39,10 +39,10 @@
     #thepanel {
         text-align: center;
     }
-    #thepanel hbox#pixel-layout, #thepanel hbox#tools_panel {
+    #thepanel hbox#pixel-layout {
         display: inline-block;
     }
-    vbox.buttons-wrap {
+    hbox.buttons-wrap {
         display: block;
     }
 }

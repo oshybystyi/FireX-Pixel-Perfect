@@ -19,12 +19,14 @@ Cu.import('chrome://FireX-Pixel/content/lib/xul.js');
 
 defineTags(
     'panel', 'vbox', 'hbox', 'description',
-    'html:input', 'label', 'textbox', 'button'
+    'html:input', 'label', 'textbox', 'button',
+    'toobarbutton'
 );
 
 const {
     PANEL, VBOX, HBOX, DESCRIPTION,
-    HTMLINPUT, LABEL, TEXTBOX, BUTTON
+    HTMLINPUT, LABEL, TEXTBOX, BUTTON,
+    TOOLBARBUTTON
 } = Xul;
 
 /** TODO: think about removing that **/
@@ -53,7 +55,7 @@ FirexPixelUi.prototype = {
     attach: function () {
         this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
 
-        this.createToolboxButton();
+        this.createOverlay();
     },
 
     destroy: function (win) {
@@ -65,127 +67,73 @@ FirexPixelUi.prototype = {
         //this.unregisterOldScripts(win);
     },
 
-    createToolboxButton: function () {
+    createOverlay: function () {
         var self = this; 
 
-        /** 
-         * TODO: figure out how createWidget finds out about all windows and
-         * possibly use it for attach method
-         */
         CustomizableUI.createWidget({
             id: this.buttonId,
             defaultArea: CustomizableUI.AREA_NAVBAR,
-            label: this.stringBundle.GetStringFromName('firexPixel.tooltip_button'),
-            tooltiptext: this.stringBundle.GetStringFromName('firexPixel.tooltip_button'),
-            onCreated: function (elem) {
+            type: 'custom',
+            onBuild: function (doc) {
                 try {
-                    self.panelNode = self.createPanel(elem);
+                    var overlay = self.overlayNode(doc);
                 }
                 catch (e) {
                     console.error(e);
                 }
-            },
-            onCommand: function (aEvent) {
-                //var thisDOMWindow = aEvent.target.ownerDocument.defaultView; //this is the browser (xul) window
-                /*
-                var thisWindowsSelectedTabsWindow = thisDOMWindow.gBrowser.selectedTab.linkedBrowser.contentWindow; //this is the html window of the currently selected tab
-                thisWindowsSelectedTabsWindow.alert('alert from html window of selected tab');
-                */
-                self.panelNode.openPopup(aEvent.target);
+
+                return overlay;
             }
         });
     },
 
-    createPanel: function (elem) {
-        let panel =
-            PANEL({'id': 'thepanel', 'type': 'arrow'},
-                HBOX({'align': 'start'},
-                    VBOX(
-                        HBOX({'class': 'pixel-hbox'},
-                            DESCRIPTION({'value': this.stringBundle.GetStringFromName('firexPixel.opacity')}),
-                            HTMLINPUT({'id': 'opacity-range', 'type': 'range', 'min': '0', 'max': '10'})
-                        ),
-                        HBOX({'id': 'pixel-coords', 'class': 'pixel-hbox'},
-                            LABEL({'control': 'coord-x', 'value': 'X:'}),
-                            TEXTBOX({'id': 'coord-x', 'class': 'coord-box', 'placeholder' : '0'}),
-                            LABEL({'control': 'coord-y', 'value': 'Y:'}),
-                            TEXTBOX({'id': 'coord-y', 'class': 'coord-box', 'placeholder': '0'})
-                        ),
-                        BUTTON({'id': 'upload-layout', 'class': 'pixel-button', 'label': this.stringBundle.GetStringFromName('firexPixel.upload_layout')}),
-                        HBOX({'id': 'pixel-layout', 'class': 'pixel-hbox'},
-                            DESCRIPTION({'value': this.stringBundle.GetStringFromName('firexPixel.not_loaded')})
-                        ),
-                        HBOX({'id': 'tools_panel'},
-                            VBOX({'class': 'buttons-wrap'},
-                                BUTTON({'id': 'tools_add', 'class': 'pixel-button', 'label': this.stringBundle.GetStringFromName('firexPixel.add_layout')}),
-                                BUTTON({'id': 'tools_remove', 'class': 'pixel-button', 'label': this.stringBundle.GetStringFromName('firexPixel.delete_layout')})
+    overlayNode: function (doc) {
+        let toolbarButtonAttrs = {
+            id: this.buttonId,
+            type: 'menu',
+            label: this.stringBundle.GetStringFromName('firexPixel.tooltip_button'),
+            tooltiptext: this.stringBundle.GetStringFromName('firexPixel.tooltip_button'),
+            class: 'toolbarbutton-1 chromeclass-toolbar-additional'
+        };
+
+        var overlay =
+            TOOLBARBUTTON(toolbarButtonAttrs,
+                PANEL({'id': 'thepanel', 'type': 'arrow'},
+                    HBOX({'align': 'start'},
+                        VBOX(
+                            HBOX({'class': 'pixel-hbox'},
+                                DESCRIPTION({'value': this.stringBundle.GetStringFromName('firexPixel.opacity')}),
+                                HTMLINPUT({'id': 'opacity-range', 'type': 'range', 'min': '0', 'max': '10'})
                             ),
-                            VBOX({'class': 'buttons-wrap'},
-                                BUTTON({'id': 'tools_transparent', 'class': 'pixel-button', 'label': this.stringBundle.GetStringFromName('firexPixel.transparent_layout')})
+                            HBOX({'id': 'pixel-coords', 'class': 'pixel-hbox'},
+                                LABEL({'control': 'coord-x', 'value': 'X:'}),
+                                TEXTBOX({'id': 'coord-x', 'class': 'coord-box', 'placeholder' : '0'}),
+                                LABEL({'control': 'coord-y', 'value': 'Y:'}),
+                                TEXTBOX({'id': 'coord-y', 'class': 'coord-box', 'placeholder': '0'})
+                            ),
+                            BUTTON({'id': 'upload-layout', 'class': 'pixel-button', 'label': this.stringBundle.GetStringFromName('firexPixel.upload_layout')}),
+                            HBOX({'id': 'pixel-layout', 'class': 'pixel-hbox'},
+                                DESCRIPTION({'value': this.stringBundle.GetStringFromName('firexPixel.not_loaded')})
+                            ),
+                            VBOX({'id': 'tools_panel'},
+                                HBOX({'class': 'buttons-wrap'},
+                                    BUTTON({'id': 'tools_add', 'class': 'pixel-button', 'label': this.stringBundle.GetStringFromName('firexPixel.add_layout')}),
+                                    BUTTON({'id': 'tools_remove', 'class': 'pixel-button', 'label': this.stringBundle.GetStringFromName('firexPixel.delete_layout')})
+                                ),
+                                HBOX({'class': 'buttons-wrap'},
+                                    BUTTON({'id': 'tools_transparent', 'class': 'pixel-button', 'label': this.stringBundle.GetStringFromName('firexPixel.transparent_layout')})
+                                )
                             )
                         )
                     )
                 )
             );
 
-        /** TODO: remove next comments **/
-        //let node = panel.build(elem);
-
-        //this.registerOldScripts(elem);
-
-        return panel.build(elem);
-    },
-
-    registerOldScripts: function (elem) {
-        /*
-        let doc = elem.ownerDocument,
-            extensionWindow = doc.getElementById('main-window');
-
-        let overlayScript = doc.createElement('script'),
-            pixelManageScript = doc.createElement('script');
-
-        overlayScript.setAttribute('type', 'application/javascript');
-        overlayScript.setAttribute('src', 'chrome://FireX-Pixel/content/overlay.js');
-        overlayScript.setAttribute('id', 'overlay-script');
-
-        pixelManageScript.setAttribute('type', 'application/javascript');
-        pixelManageScript.setAttribute('src', 'chrome://FireX-Pixel/content/pixelManage.js');
-        pixelManageScript.setAttribute('id', 'pixel-manage-script');
-
-        extensionWindow.appendChild(overlayScript);
-        extensionWindow.appendChild(pixelManageScript);
-        */
-        /*
-        Cu.import('chrome://FireX-Pixel/content/overlay.js');
-        Cu.import('chrome://FireX-Pixel/content/pixelManage.js');
-        */
-        var win = elem.ownerDocument.defaultView;
-        var scope = {
-            window: win,
-            document: win.document,
-            content: win.content,
-            Components: Components
-        };
-
-        Services.scriptloader.loadSubScript('chrome://FireX-Pixel/content/pixelManage.js', scope);
-        Services.scriptloader.loadSubScript('chrome://FireX-Pixel/content/overlay.js', scope);
-
-        /** TODO: assign scope to constructor variable **/
+        return overlay.build(doc);
     },
 
     unregisterOldScripts: function (win) {
-        /*
-        let overlayScript = win.document.getElementById('overlay-script'),
-            pixelManageScript = win.document.getElementById('pixel-manage-script');
-
-        overlayScript.parentNode.removeChild(overlayScript);
-        pixelManageScript.parentNode.removeChild(pixelManageScript);
-        */
-        /*
-        Cu.unload('chrome://FireX-Pixel/content/overlay.js');
-        Cu.unload('chrome://FireX-Pixel/content/pixelManage.js');
-        */
-
+        /** TODO: remove this method **/
         /** TODO: remove window load event listener - from overlay.js **/
     }
 
