@@ -45,10 +45,10 @@ function FirexPixelUi() {
         .getService(Components.interfaces.nsIStyleSheetService);
     let ios = Components.classes["@mozilla.org/network/io-service;1"]
         .getService(Components.interfaces.nsIIOService);
-    this.cssUri = ios.newURI("chrome://FireX-Pixel/skin/ui.css", null, null);
+    this.cssUri = ios.newURI("chrome://FireX-Pixel/skin/overlay.css", null, null);
 
     /** Import localization properties **/
-    this.stringBundle = Services.strings.createBundle('chrome://FireX-Pixel/locale/ui.properties?' + Math.random()); // Randomize URI to work around bug 719376
+    this.stringBundle = Services.strings.createBundle('chrome://FireX-Pixel/locale/overlay.properties?' + Math.random()); // Randomize URI to work around bug 719376
 }
 
 FirexPixelUi.prototype = {
