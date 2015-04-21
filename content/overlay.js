@@ -167,16 +167,34 @@ PixelPerfect.prototype.copyLayout = function()
 
     try {
         iFile.copyTo(iDir, null);
+        var imageURI = "chrome://FireX-Pixel/content/layouts/" + this.localFile.leafName;
     }
     catch (e) {
         /** When we developing without .xpi than use temporary folder **/
         iFile.copyTo(tmpDir, null);
+
+        tmpDir.append(this.localFile.leafName);
+        var imageURI = this.generateDataURI(tmpDir);
     }
 
     var manage = new PixelManage();
-    manage.addToDOM(this.localFile.leafName);
+    manage.addToDOM(imageURI);
 
     this.pixelManager = manage;
+}
+/** This is taken from https://developer.mozilla.org/en-US/docs/Web/HTTP/data_URIs **/
+PixelPerfect.prototype.generateDataURI = function(file) {
+  var contentType = Components.classes["@mozilla.org/mime;1"]
+                              .getService(Components.interfaces.nsIMIMEService)
+                              .getTypeFromFile(file);
+  var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"]
+                              .createInstance(Components.interfaces.nsIFileInputStream);
+  inputStream.init(file, 0x01, 0600, 0);
+  var stream = Components.classes["@mozilla.org/binaryinputstream;1"]
+                         .createInstance(Components.interfaces.nsIBinaryInputStream);
+  stream.setInputStream(inputStream);
+  var encoded = btoa(stream.readBytes(stream.available()));
+  return "data:" + contentType + ";base64," + encoded;
 }
 
 function firexPixelInit() {

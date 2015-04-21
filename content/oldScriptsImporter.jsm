@@ -20,13 +20,21 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 function OldScriptsImporter() {
     var self = this;
 
+    /**
+     * Variables used in old scripts are stored in this.scope
+     * this is particularly useful when it is necessary to update
+     * window.content variable on switching tab
+     */
+    this.scope = {};
+
     this.listener = {
         onWidgetAfterDOMChange: function(aNode) {
             if (aNode.id === firexPixelUi.buttonId) {
                 var win = aNode.ownerDocument.defaultView,
                     scope = {
                         window: win,
-                        Components: Components
+                        Components: Components,
+                        Services: Services
                     };
 
                 try {
@@ -46,6 +54,12 @@ function OldScriptsImporter() {
                         }
                     });
 
+                    /** Write errors to terminal **/
+                    scope['console'] = console;
+
+                    /** The scope['btoa'] didn't work for unknown reason **/
+                    scope['btoa'] = btoa;
+
                     /** Loading sciprts **/
                     Services.scriptloader.loadSubScript('chrome://FireX-Pixel/content/pixelManage.js', scope);
                     Services.scriptloader.loadSubScript('chrome://FireX-Pixel/content/overlay.js', scope);
@@ -56,6 +70,15 @@ function OldScriptsImporter() {
                      */
                     scope['PixelPerfect'].prototype = self.wrapAllMethods(scope['PixelPerfect'].prototype);
                     scope['PixelManage'].prototype = self.wrapAllMethods(scope['PixelManage'].prototype);
+
+                    self.scope = scope;
+
+                    /**
+                     * Since we copied from scope.window.content into scope
+                     * content - we need to update it every time tab was
+                     * switched
+                     */
+                    self.attachUpdateContentOnTabSelect();
                 }
                 catch (e) {
                     console.error(e);
@@ -67,6 +90,8 @@ function OldScriptsImporter() {
     /** Don't log the same exceptions twice **/
     this.loggedErrors = [];
 
+    /** Whether event listener for scope['content'] was attached **/
+    this.scopeContentUpdateListenerAttached = false;
 }
 
 OldScriptsImporter.prototype = {
@@ -76,6 +101,8 @@ OldScriptsImporter.prototype = {
 
     remove: function() {
         CustomizableUI.removeListener(this.listener);
+
+        this.removeUpdateContentOnTabSelect();
     },
 
     wrapAllMethods: function(obj) {
@@ -101,7 +128,7 @@ OldScriptsImporter.prototype = {
         if (!func._wrapped) {
             func._wrapped = function() {
                 try{
-                    func.apply(this, arguments);
+                    return func.apply(this, arguments);
                 } catch(e) {
                     if (self.loggedErrors.indexOf(e) === -1) {
                         /** Haven't yet logged this exception **/
@@ -114,6 +141,31 @@ OldScriptsImporter.prototype = {
             }
         }
         return func._wrapped;
+    },
+
+    /**
+     * It is necessary to update this.scope['content'] on tab switch
+     */
+    attachUpdateContentOnTabSelect: function() {
+        if (this.contentUpdateListenerAttached) {
+            return;
+        }
+
+        var tabContainer = this.scope['window'].gBrowser.tabContainer;
+
+        tabContainer.addEventListener('TabSelect', this.updateContentOnTabSelect.bind(this));
+
+        this.contentUpdateListenerAttached = true;
+    },
+
+    removeUpdateContentOnTabSelect: function() {
+        var tabContainer = this.scope['window'].gBrowser.tabContainer;
+
+        tabContainer.removeEventListener('TabSelect', this.updateContentOnTabSelect);
+    },
+
+    updateContentOnTabSelect: function() {
+        this.scope['content'] = this.scope['window'].content;
     }
 }
 

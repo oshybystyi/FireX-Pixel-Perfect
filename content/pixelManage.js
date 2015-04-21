@@ -108,7 +108,7 @@ PixelManage.prototype.toggleTransparence = function()
         image.style.pointerEvents= 'all';
     }
 }
-PixelManage.prototype.addToDOM = function(name)
+PixelManage.prototype.addToDOM = function(imageURI)
 {
     if(!this.imageObject)
     {
@@ -124,7 +124,7 @@ PixelManage.prototype.addToDOM = function(name)
         content.document.body.appendChild(pixelWrap);
 
         var imageObject = content.document.createElement("img");
-        imageObject.src = "chrome://FireX-Pixel/content/layouts/" + name;
+        imageObject.src = imageURI;
         imageObject.setAttribute("draggable", false);
         imageObject.setAttribute("style", "pointer-events: none;");
         pixelWrap.appendChild(imageObject);
