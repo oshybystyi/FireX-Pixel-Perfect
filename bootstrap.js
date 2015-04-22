@@ -12,7 +12,7 @@ Cu.import('resource://gre/modules/Services.jsm');
 
 function startup(data,reason) {
     Cu.import('chrome://FireX-Pixel/content/defaultPrefs.js');
-    Cu.import('chrome://FireX-Pixel/content/firexPixelUi.jsm');
+    Cu.import('chrome://FireX-Pixel/content/ui.jsm');
     Cu.import('chrome://FireX-Pixel/content/oldScriptsImporter.jsm');
 
     setDefaultPrefs();
@@ -27,7 +27,7 @@ function shutdown(data,reason) {
 
     Cu.unload('chrome://FireX-Pixel/content/defaultPrefs.js');
     Cu.unload('chrome://FireX-Pixel/content/oldScriptsImporter.jsm');
-    Cu.unload('chrome://FireX-Pixel/content/firexPixelUi.jsm');
+    Cu.unload('chrome://FireX-Pixel/content/ui.jsm');
 
     // HACK WARNING: The Addon Manager does not properly clear all addon related caches on update;
     //               in order to fully update images and locales, their caches need clearing here
@@ -35,9 +35,9 @@ function shutdown(data,reason) {
 }
 function loadFireXPixel() {
     oldScriptsImporter.addOnUiRegistered();
-    firexPixelUi.attach();
+    ui.attach();
 }
 function unloadFireXPixel() {
     oldScriptsImporter.remove();
-    firexPixelUi.destroy();
+    ui.destroy();
 }

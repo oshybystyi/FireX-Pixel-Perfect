@@ -3,7 +3,7 @@
 
 'use strict';
 
-var EXPORTED_SYMBOLS = ['firexPixelUi'];
+var EXPORTED_SYMBOLS = ['ui'];
 
 const Cu = Components.utils;
 
@@ -34,7 +34,7 @@ const {
  * Add and remove addon user interface - replacement over overlay.xul, which
  * can't be ported into restartless extension
  */
-function FirexPixelUi() {
+function Ui() {
     this.panelNode = null;
     this.buttonId = 'toolbar-pixel';
 
@@ -49,7 +49,7 @@ function FirexPixelUi() {
     this.stringBundle = Services.strings.createBundle('chrome://FireX-Pixel/locale/overlay.properties?' + Math.random()); // Randomize URI to work around bug 719376
 }
 
-FirexPixelUi.prototype = {
+Ui.prototype = {
     attach: function() {
         this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
 
@@ -130,4 +130,4 @@ FirexPixelUi.prototype = {
 }
 
 /** Singleton to avoid multiple initialization for startup and shutdown **/
-var firexPixelUi = new FirexPixelUi();
+var ui = new Ui();
