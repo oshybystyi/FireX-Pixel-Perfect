@@ -41,3 +41,9 @@ function unloadFireXPixel() {
     oldScriptsImporter.remove();
     ui.destroy();
 }
+function install() {
+    /** Present here only to avoid warning on installation **/
+}
+function uninstall() {
+    /** Present here only to avoid watning on addon removal **/
+}
