@@ -5,7 +5,7 @@
 
 var EXPORTED_SYMBOLS = ['oldScriptsImporter'];
 
-const Cu = Components.utils;
+const { utils: Cu, interfaces: Ci } = Components;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
@@ -14,25 +14,25 @@ Cu.import('resource:///modules/CustomizableUI.jsm');
 
 Cu.import('chrome://FireX-Pixel/content/firexPixelUi.jsm');
 
-/** TODO: think about removing that **/
+/** Log into terminal that runs firefox **/
 Cu.import("resource://gre/modules/devtools/Console.jsm");
 
 function OldScriptsImporter() {
+    /**
+     * TODO: use window instead of scope
+     * this would lead to possibility of removing TabSelect event listener
+     * but need to manually remove PixelPerfect and PixelManage objects from
+     * xulWindow
+     */
+
     var self = this;
 
-    /**
-     * Variables used in old scripts are stored in this.scope
-     * this is particularly useful when it is necessary to update
-     * window.content variable on switching tab
-     */
-    this.scope = {};
-
-    this.listener = {
+    this.uiListener = {
         onWidgetAfterDOMChange: function(aNode) {
             if (aNode.id === firexPixelUi.buttonId) {
-                var win = aNode.ownerDocument.defaultView,
+                var xulWindow = aNode.ownerDocument.defaultView,
                     scope = {
-                        window: win,
+                        window: xulWindow,
                         Components: Components,
                         Services: Services
                     };
@@ -42,9 +42,12 @@ function OldScriptsImporter() {
                      * Copy all the properties that might be necessary in old
                      * scripts
                      */
-                    win.Object.getOwnPropertyNames(win).forEach(function(property) {
+                    xulWindow.Object.getOwnPropertyNames(xulWindow).forEach(function(property) {
                         try {
-                            scope[property] = win[property];
+                            if (property !== '_content') {
+                                /** Avoid deprecation warning in console **/
+                                scope[property] = xulWindow[property];
+                            }
                         }
                         catch (e) {
                             /**
@@ -71,14 +74,19 @@ function OldScriptsImporter() {
                     scope['PixelPerfect'].prototype = self.wrapAllMethods(scope['PixelPerfect'].prototype);
                     scope['PixelManage'].prototype = self.wrapAllMethods(scope['PixelManage'].prototype);
 
-                    self.scope = scope;
+                    /**
+                     * Store the scope in xulWindow, previously used
+                     * this.scope but run into problem when multiple windows
+                     * are openned
+                     */
+                    xulWindow.oldOverlayScriptsScope = scope;
 
                     /**
                      * Since we copied from scope.window.content into scope
                      * content - we need to update it every time tab was
                      * switched
                      */
-                    self.attachUpdateContentOnTabSelect();
+                    self.attachUpdateContentOnTabSelect(xulWindow);
                 }
                 catch (e) {
                     console.error(e);
@@ -89,20 +97,18 @@ function OldScriptsImporter() {
 
     /** Don't log the same exceptions twice **/
     this.loggedErrors = [];
-
-    /** Whether event listener for scope['content'] was attached **/
-    this.scopeContentUpdateListenerAttached = false;
 }
 
 OldScriptsImporter.prototype = {
     addOnUiRegistered: function() {
-        CustomizableUI.addListener(this.listener);
+        CustomizableUI.addListener(this.uiListener);
     },
 
     remove: function() {
-        CustomizableUI.removeListener(this.listener);
+        CustomizableUI.removeListener(this.uiListener);
 
-        this.removeUpdateContentOnTabSelect();
+        this.foreachWindow(this.removeAppliedLayers);
+        this.foreachWindow(this.removeUpdateContentOnTabSelect);
     },
 
     wrapAllMethods: function(obj) {
@@ -146,27 +152,63 @@ OldScriptsImporter.prototype = {
     /**
      * It is necessary to update this.scope['content'] on tab switch
      */
-    attachUpdateContentOnTabSelect: function() {
-        if (this.contentUpdateListenerAttached) {
+    attachUpdateContentOnTabSelect: function(xulWindow) {
+        if (xulWindow.oldOverlayScriptsScope.contentUpdateListenerAttached) {
+            /**
+             * Flag whether scope.content update tab select listener have been
+             * attached
+             */
             return;
         }
 
-        var tabContainer = this.scope['window'].gBrowser.tabContainer;
+        var tabContainer = xulWindow.gBrowser.tabContainer;
 
-        tabContainer.addEventListener('TabSelect', this.updateContentOnTabSelect.bind(this));
+        tabContainer.addEventListener('TabSelect', this.updateContentOnTabSelect.bind(undefined, xulWindow.oldOverlayScriptsScope));
 
-        this.contentUpdateListenerAttached = true;
+        xulWindow.oldOverlayScriptsScope.contentUpdateListenerAttached = true;
     },
 
-    removeUpdateContentOnTabSelect: function() {
-        var tabContainer = this.scope['window'].gBrowser.tabContainer;
+    /**
+     * Remove event listeners to update scope content variable
+     */
+    removeUpdateContentOnTabSelect: function(xulWindow) {
+        let tabContainer = xulWindow.gBrowser.tabContainer;
 
-        tabContainer.removeEventListener('TabSelect', this.updateContentOnTabSelect);
+        tabContainer.removeEventListener('TabSelect', this.updateContentOnTabSelect.bind(undefined, xulWindow.oldOverlayScriptsScope));
+
+        xulWindow.oldOverlayScriptsScope.contentUpdateListenerAttached = false;
     },
 
-    updateContentOnTabSelect: function() {
-        this.scope['content'] = this.scope['window'].content;
+    /**
+     * Func that updates scope content variable.
+     * Made a separate function for this to be able to remove listener
+     */
+    updateContentOnTabSelect: function(scope) {
+        scope['content'] = scope['window'].content;
+    },
+
+    /**
+     * Force remove of applied layer to content DOM
+     */
+    removeAppliedLayers: function(xulWindow) {
+        /** Iterate over all tabls **/
+        xulWindow.gBrowser.browsers.forEach(function(browser) {
+            xulWindow.oldOverlayScriptsScope.PixelManage.prototype.removeFromDOM(browser.contentWindow);
+        });
+    },
+
+    /**
+     * Iterate over all windows and run some func
+     */
+    foreachWindow: function(func) {
+        let windows = Services.wm.getEnumerator("navigator:browser");
+        while (windows.hasMoreElements()) {
+            let xulWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+
+            func.call(this, xulWindow);
+        }
     }
+
 }
 
 var oldScriptsImporter = new OldScriptsImporter();

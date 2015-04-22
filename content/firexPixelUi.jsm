@@ -12,7 +12,8 @@ Cu.import('resource://gre/modules/Services.jsm');
 /** CustomizableUI used to create toolbar button **/
 Cu.import('resource:///modules/CustomizableUI.jsm');
 
-const { AREA_PANEL, AREA_NAVBAR } = CustomizableUI;
+/** Log into console (also shown in terminal that runs firefox **/
+Cu.import("resource://gre/modules/devtools/Console.jsm");
 
 /** Xul.js used to define set of functions similar to tags of overlay.xul **/
 Cu.import('chrome://FireX-Pixel/content/lib/xul.js');
@@ -28,9 +29,6 @@ const {
     HTMLINPUT, LABEL, TEXTBOX, BUTTON,
     TOOLBARBUTTON
 } = Xul;
-
-/** TODO: think about removing that **/
-Cu.import("resource://gre/modules/devtools/Console.jsm");
 
 /**
  * Add and remove addon user interface - replacement over overlay.xul, which
@@ -52,29 +50,26 @@ function FirexPixelUi() {
 }
 
 FirexPixelUi.prototype = {
-    attach: function () {
+    attach: function() {
         this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
 
         this.createOverlay();
     },
 
-    destroy: function (win) {
+    destroy: function() {
         CustomizableUI.destroyWidget(this.buttonId);
         if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET))
             this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
-
-        /** TODO: move that to be in logic implementation module **/
-        //this.unregisterOldScripts(win);
     },
 
-    createOverlay: function () {
+    createOverlay: function() {
         var self = this; 
 
         CustomizableUI.createWidget({
             id: this.buttonId,
             defaultArea: CustomizableUI.AREA_NAVBAR,
             type: 'custom',
-            onBuild: function (doc) {
+            onBuild: function(doc) {
                 try {
                     var overlay = self.overlayNode(doc);
                 }
@@ -87,7 +82,7 @@ FirexPixelUi.prototype = {
         });
     },
 
-    overlayNode: function (doc) {
+    overlayNode: function(doc) {
         let toolbarButtonAttrs = {
             id: this.buttonId,
             type: 'menu',
@@ -130,11 +125,6 @@ FirexPixelUi.prototype = {
             );
 
         return overlay.build(doc);
-    },
-
-    unregisterOldScripts: function (win) {
-        /** TODO: remove this method **/
-        /** TODO: remove window load event listener - from overlay.js **/
     }
 
 }

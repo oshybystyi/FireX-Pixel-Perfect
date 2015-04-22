@@ -85,14 +85,17 @@ PixelManage.prototype.init = function()
         }
     }     
 }
-PixelManage.prototype.removeFromDOM = function()
+PixelManage.prototype.removeFromDOM = function(lookIn)
 {
+    /** On shutdown it is necessary to remove layer from another tab **/
+    lookIn = lookIn || content;
+
     this.imageObject = null;
 
-    var image = content.document.getElementById("pixel-image");
+    var image = lookIn.document.getElementById("pixel-image");
     if(image)
     {
-        content.document.body.removeChild(image);
+        lookIn.document.body.removeChild(image);
     }
 }
 PixelManage.prototype.toggleTransparence = function()
