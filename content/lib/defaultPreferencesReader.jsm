@@ -6,7 +6,8 @@ Cu.import('resource://gre/modules/Services.jsm');
 Cu.import('resource://gre/modules/FileUtils.jsm');
 
 /**
- * The next is because bootstrap install() doesn't know about extension alias
+ * Relative import used here in case component will be used in some other
+ * project
  */
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 XPCOMUtils.importRelative(this, 'fileGetContents.js');
