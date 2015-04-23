@@ -12,12 +12,12 @@ Cu.import('resource://gre/modules/FileUtils.jsm');
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 XPCOMUtils.importRelative(this, 'fileGetContents.js');
 
-var EXPORTED_SYMBOLS = ['DefaultPreferencesReader'];
+var EXPORTED_SYMBOLS = ['DefaultPreferencesLoader'];
 
 /**
  * Read defaults/preferences/* and set Services.pref default branch
  */
-function DefaultPreferencesReader(installPath) {
+function DefaultPreferencesLoader(installPath) {
     this.reg = new RegExp(
             "pref\\(" +
                 "[\"']" +
@@ -40,7 +40,7 @@ function DefaultPreferencesReader(installPath) {
     this.readFrom = installPath;
 } 
 
-DefaultPreferencesReader.prototype = {
+DefaultPreferencesLoader.prototype = {
     parseDirectory: function() {
         let entries = this.readFrom.directoryEntries;
 

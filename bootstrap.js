@@ -10,9 +10,15 @@ const Cu = Components.utils;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
+const extensionLink = 'chrome://FireX-Pixel/',
+      contentLink = extensionLink + 'content/',
+      uiModuleLink = contentLink + 'ui.jsm',
+      oldScriptsModuleLink = contentLink + 'oldScriptsImporter.jsm',
+      defaultPreferencesLoaderLink = contentLink + 'lib/defaultPreferencesLoader.jsm';
+
 function startup(data,reason) {
-    Cu.import('chrome://FireX-Pixel/content/ui.jsm');
-    Cu.import('chrome://FireX-Pixel/content/oldScriptsImporter.jsm');
+    Cu.import(uiModuleLink);
+    Cu.import(oldScriptsModuleLink);
 
     loadDefaultPreferences(data.installPath);
     loadFireXPixel();
@@ -23,8 +29,8 @@ function shutdown(data,reason) {
 
     unloadFireXPixel();
 
-    Cu.unload('chrome://FireX-Pixel/content/oldScriptsImporter.jsm');
-    Cu.unload('chrome://FireX-Pixel/content/ui.jsm');
+    Cu.unload(oldScriptsModuleLink);
+    Cu.unload(uiModuleLink);
 
     // HACK WARNING: The Addon Manager does not properly clear all addon related caches on update;
     //               in order to fully update images and locales, their caches need clearing here
@@ -39,12 +45,12 @@ function unloadFireXPixel() {
     ui.destroy();
 }
 function loadDefaultPreferences(installPath) {
-    Cu.import('chrome://FireX-Pixel/content/lib/defaultPreferencesReader.jsm');
+    Cu.import(defaultPreferencesLoaderLink);
 
-    let defaultPreferencesReader = new DefaultPreferencesReader(installPath);
-    defaultPreferencesReader.parseDirectory();
+    let defaultPreferencesLoader = new DefaultPreferencesLoader(installPath);
+    defaultPreferencesLoader.parseDirectory();
 
-    Cu.unload('chrome://FireX-Pixel/content/defaultPreferencesReader.js');
+    Cu.unload(defaultPreferencesLoaderLink);
 }
 function install(data) {
     /** Present here only to avoid warning on addon installation **/
