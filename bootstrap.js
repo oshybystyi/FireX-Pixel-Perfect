@@ -10,13 +10,11 @@ const Cu = Components.utils;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
-/** Proper console logging (display error stack) **/
-Cu.import('resource://gre/modules/devtools/Console.jsm');
-
 function startup(data,reason) {
     Cu.import('chrome://FireX-Pixel/content/ui.jsm');
     Cu.import('chrome://FireX-Pixel/content/oldScriptsImporter.jsm');
 
+    loadDefaultPreferences(data.installPath);
     loadFireXPixel();
 }
 function shutdown(data,reason) {
@@ -25,7 +23,6 @@ function shutdown(data,reason) {
 
     unloadFireXPixel();
 
-    Cu.unload('chrome://FireX-Pixel/content/defaultPrefs.js');
     Cu.unload('chrome://FireX-Pixel/content/oldScriptsImporter.jsm');
     Cu.unload('chrome://FireX-Pixel/content/ui.jsm');
 
@@ -41,17 +38,17 @@ function unloadFireXPixel() {
     oldScriptsImporter.remove();
     ui.destroy();
 }
-function install(data) {
-    /** Load default preferences **/
-    let resourceURI = data.resourceURI;
-    resourceURI.spec = ResourceURI.spec + 'content/lib/defaultPreferencesReader.jsm';
-    Cu.import(resourceURI);
+function loadDefaultPreferences(installPath) {
+    Cu.import('chrome://FireX-Pixel/content/lib/defaultPreferencesReader.jsm');
 
-    let defaultPreferencesReader = new DefaultPreferencesReader(data.installPath);
+    let defaultPreferencesReader = new DefaultPreferencesReader(installPath);
     defaultPreferencesReader.parseDirectory();
 
-    Cu.unload(resourceURI);
+    Cu.unload('chrome://FireX-Pixel/content/defaultPreferencesReader.js');
+}
+function install(data) {
+    /** Present here only to avoid warning on addon installation **/
 }
 function uninstall() {
-    /** Present here only to avoid watning on addon removal **/
+    /** Present here only to avoid warning on addon removal **/
 }
