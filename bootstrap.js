@@ -27,6 +27,7 @@ function shutdown(data,reason) {
     if (reason == APP_SHUTDOWN)
         return;
 
+    unloadDefaultPreferences();
     unloadFireXPixel();
 
     Cu.unload(oldScriptsModuleLink);
@@ -47,8 +48,11 @@ function unloadFireXPixel() {
 function loadDefaultPreferences(installPath) {
     Cu.import(defaultPreferencesLoaderLink);
 
-    let defaultPreferencesLoader = new DefaultPreferencesLoader(installPath);
-    defaultPreferencesLoader.parseDirectory();
+    this.defaultPreferencesLoader = new DefaultPreferencesLoader(installPath);
+    this.defaultPreferencesLoader.parseDirectory();
+}
+function unloadDefaultPreferences() {
+    this.defaultPreferencesLoader.clearDefaultPrefs();
 
     Cu.unload(defaultPreferencesLoaderLink);
 }

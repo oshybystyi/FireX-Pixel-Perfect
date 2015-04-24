@@ -1,16 +1,9 @@
 
-const Cu = Components.utils;
+const { utils: Cu, classes: Cc, interfaces: Ci } = Components;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
 Cu.import('resource://gre/modules/FileUtils.jsm');
-
-/**
- * Relative import used here in case component will be used in some other
- * project
- */
-Cu.import('resource://gre/modules/XPCOMUtils.jsm');
-XPCOMUtils.importRelative(this, 'fileGetContents.js');
 
 var EXPORTED_SYMBOLS = ['DefaultPreferencesLoader'];
 
@@ -18,63 +11,84 @@ var EXPORTED_SYMBOLS = ['DefaultPreferencesLoader'];
  * Read defaults/preferences/* and set Services.pref default branch
  */
 function DefaultPreferencesLoader(installPath) {
-    this.reg = new RegExp(
-            "pref\\(" +
-                "[\"']" +
-                    "([\\w-\\.]+\\.)" + // branch (captured)
-                    "(\\w+)" + // key (captured)
-                "[\"']" +
-                ",\\s*" + // divider before value
-                "(.+)" + // value (captured)
-            "\\)"
-    , 'gm');
+    let readFrom = installPath.clone(); // don't modify the original object
 
     ['defaults', 'preferences'].forEach(function(dir) {
-        installPath.append(dir);
+        readFrom.append(dir);
     });
 
-    if (installPath.exists() !== true) {
-        throw new DefaultsDirectoryMissingError(installPath);
+    this.baseURI = Services.io.newFileURI(readFrom);
+
+    if (readFrom.exists() !== true) {
+        throw new DefaultsDirectoryMissingError(readFrom);
     }
 
-    this.readFrom = installPath;
+    this.readFrom = readFrom;
+
+    this.defaultBranch = Services.prefs.getDefaultBranch("");
 } 
 
 DefaultPreferencesLoader.prototype = {
-    parseDirectory: function() {
-        let entries = this.readFrom.directoryEntries;
+    /**
+     * Iterate over files in the default/preferences/*
+     *
+     * @param {function} prefFunc the function that should be used instead of
+     * pref
+     */
+    parseDirectory: function(prefFunc) {
+        prefFunc = prefFunc || this.pref.bind(this);
 
-        while (entries.hasMoreElements()) {
-            let entryData = fileGetContents(entries.getNext());
+	let entries = this.readFrom.directoryEntries;
 
-            this.parseData(entryData);
+	while (entries.hasMoreElements()) {
+	    let fileURI = Services.io.newFileURI(entries.getNext());
+
+	    Services.scriptloader.loadSubScript(fileURI.spec, { pref: prefFunc });
+	}
+    },
+
+    /**
+     * Emulates firefox pref function to load default preferences
+     */
+    pref: function(key, value) {
+        switch (typeof value) {
+            case 'boolean':
+                this.defaultBranch.setBoolPref(key, value);
+                break;
+
+            case 'number':
+                this.defaultBranch.setIntPref(key, value);
+                break;
+
+            case 'string':
+                /**
+                 * Using setComplexValue instead of setCharPref because of
+                 * unicode support
+                 */
+                let str = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
+                str.value = value;
+                this.defaultBranch.setComplexValue(key, Ci.nsISupportsString, str);
+                break;
+
+            default:
+                throw new NotSupportedValueTypeError(key);
+                break;
         }
     },
 
     /**
-     * The algorithm is mostly taken from
-     * Taken from http://starkravingfinkle.org/blog/2011/01/restartless-add-ons-%E2%80%93-default-preferences/
+     * Clears default preferences according to AMO reviewers reccommendation
+     * This should be invoked on bootstrap::shutdown
+     * @see https://github.com/firebug/firebug/blob/master/extension/modules/prefLoader.js
      */
-    parseData: function(data) {
-        let matches = [];
+    clearDefaultPrefs: function() {
+        this.parseDirectory(this.prefUnload.bind(this));
+    },
 
-        while ((matches = this.reg.exec(data)) !== null) {
-            let { 1: branchName, 2: key, 3: value } = matches,
-                branch = Services.prefs.getDefaultBranch(branchName);
-
-            value = eval(value);
-
-            switch (typeof value) {
-                case "boolean":
-                    branch.setBoolPref(key, value);
-                    break;
-                case "number":
-                    branch.setIntPref(key, value);
-                    break;
-                case "string":
-                    branch.setCharPref(key, value);
-                    break;
-            }
+    prefUnload: function(key) {
+        let branch = this.defaultBranch;
+        if (branch.prefHasUserValue(key) !== true) {
+            branch.deleteBranch(key);
         }
     }
 
@@ -90,3 +104,13 @@ function DefaultsDirectoryMissingError(installPath) {
 
 /** Inherit from Error for error stack and pretty output in terminal **/
 DefaultsDirectoryMissingError.prototype = new Error();
+
+/**
+ * Not supported value type to store by pref
+ */
+function NotSupportedValueTypeError(key) {
+    this.name = 'NotSupportedValueType';
+    this.message = 'Value type for key \'' + key + '\' is not supported';
+}
+
+NotSupportedValueTypeError.prototype = new Error();
