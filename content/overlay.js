@@ -10,6 +10,7 @@ var PixelPerfect = function()
     this.prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
     this.localFile = null;
     this.pixelManager = null;
+    this.imagePath = null;
 }
 PixelPerfect.prototype.onload = function()
 {
@@ -28,10 +29,10 @@ PixelPerfect.prototype.onload = function()
     if(tools_add)
     {
         tools_add.addEventListener("click", function() {
-            if(self.pixelManager)
+            if(self.pixelManager && self.imagePath)
             {
                 self.pixelManager.init();
-                self.pixelManager.addToDOM(self.localFile.leafName);
+                self.pixelManager.addToDOM(self.imagePath);
             }
         });
     }
@@ -179,6 +180,7 @@ PixelPerfect.prototype.copyLayout = function()
 
     var manage = new PixelManage();
     manage.addToDOM(imageURI);
+    this.imagePath = imageURI;
 
     this.pixelManager = manage;
 }
