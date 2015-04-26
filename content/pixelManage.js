@@ -85,14 +85,17 @@ PixelManage.prototype.init = function()
         }
     }     
 }
-PixelManage.prototype.removeFromDOM = function()
+PixelManage.prototype.removeFromDOM = function(lookIn)
 {
+    /** On shutdown it is necessary to remove layer from another tab **/
+    lookIn = lookIn || content;
+
     this.imageObject = null;
 
-    var image = content.document.getElementById("pixel-image");
+    var image = lookIn.document.getElementById("pixel-image");
     if(image)
     {
-        content.document.body.removeChild(image);
+        lookIn.document.body.removeChild(image);
     }
 }
 PixelManage.prototype.toggleTransparence = function()
@@ -108,7 +111,7 @@ PixelManage.prototype.toggleTransparence = function()
         image.style.pointerEvents= 'all';
     }
 }
-PixelManage.prototype.addToDOM = function(name)
+PixelManage.prototype.addToDOM = function(imageURI)
 {
     if(!this.imageObject)
     {
@@ -124,7 +127,7 @@ PixelManage.prototype.addToDOM = function(name)
         content.document.body.appendChild(pixelWrap);
 
         var imageObject = content.document.createElement("img");
-        imageObject.src = "chrome://FireX-Pixel/content/layouts/" + name;
+        imageObject.src = imageURI;
         imageObject.setAttribute("draggable", false);
         imageObject.setAttribute("style", "pointer-events: none;");
         pixelWrap.appendChild(imageObject);

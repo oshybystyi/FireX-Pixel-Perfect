@@ -4,18 +4,19 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>firex@pixel</em:id>
     <em:name>FireX Pixel Perfect</em:name>
-    <em:version>1.4</em:version>
+    <em:version>1.4.1</em:version>
     <em:description>Pixel Perfect for web-developers.</em:description>
     <em:creator>Exclumice</em:creator>
     <em:homepageURL>https://addons.mozilla.org/ru/firefox/user/Exclumice/</em:homepageURL>
     <em:iconURL>chrome://FireX-Pixel/skin/icon-32.png</em:iconURL>
     <em:unpack>true</em:unpack>
+    <em:bootstrap>true</em:bootstrap>
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
         <em:type>2</em:type>
-        <em:minVersion>18.0</em:minVersion>
-        <em:maxVersion>33.*</em:maxVersion>
+        <em:minVersion>29.0</em:minVersion>
+        <em:maxVersion>39.*</em:maxVersion>
       </Description>
     </em:targetApplication>
   </Description>

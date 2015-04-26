@@ -1,7 +1,0 @@
-<!ENTITY opacity "Opacité : ">
-<!ENTITY not_loaded "Le calque n'est pas chargé.">
-<!ENTITY upload_layout "Mettre à jour le calque">
-<!ENTITY add_layout "Ajouter le calque">
-<!ENTITY delete_layout "supprimer le calque">
-<!ENTITY tooltip_button "FireX Pixel-Perfect">
-<!ENTITY transparent_layout "Libérer/Ancrer">
