@@ -1,0 +1,6 @@
+
+# Force .jsm files to be classified as javascript files instead of 'Java'
+# this is made for github show a proper language in repo homepage
+# see https://github.com/github/linguist/issues/2377
+
+*.jsm linguist-language=Javascript
