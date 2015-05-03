@@ -11,4 +11,4 @@ Add to Firefox: https://addons.mozilla.org/ru/firefox/addon/firex-pixel-perfect/
 
 * Way to organize development process might be helpful, especially if you're new to extension development - https://github.com/Exclumice/FireX-Pixel-Perfect/wiki/Development-process
 * About pull requests - https://help.github.com/articles/using-pull-requests/
-* Feel free to ask questions on gitter - https://gitter.im/Exclumice/FireX-Pixel-Perfect?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+* Feel free to ask questions on gitter - https://gitter.im/Exclumice/FireX-Pixel-Perfect
