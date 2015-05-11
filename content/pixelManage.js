@@ -3,6 +3,8 @@ var PixelManage = function()
     this.imageObject = null;
 
     this.init();
+
+    this.locked = false; // whether 'lock' button have been pressed
 }
 PixelManage.prototype.init = function()
 {
@@ -16,9 +18,8 @@ PixelManage.prototype.init = function()
 
     content.document.addEventListener("keypress", function(e) {
         var keyCode = e.keyCode || e.which;
-        if(self.imageObject)
+        if(self.imageObject && self.locked === false)
         {
-            e.preventDefault();
             switch(keyCode)
             {
                 case 1092:
@@ -45,11 +46,16 @@ PixelManage.prototype.init = function()
                     self.imageObject.style.top = parseInt(self.imageObject.style.top, 10) + 1 + "px";
                     break;
                 }
+                default:
+                {
+                    return; // Pass other keys further to default event handlers
+                }
             }
 
+            e.preventDefault();
             self.setInputCoords();
         }
-    }, false);
+    });
 
     var opacityRange = document.getElementById("opacity-range");
     if(opacityRange)
@@ -105,10 +111,12 @@ PixelManage.prototype.toggleTransparence = function()
     if(!image.style.pointerEvents)
     {
         image.style.pointerEvents = 'none';
+        this.locked = true;
     }
     else
     {
         image.style.pointerEvents= 'all';
+        this.locked = false;
     }
 }
 PixelManage.prototype.addToDOM = function(imageURI)
